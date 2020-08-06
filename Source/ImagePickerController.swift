@@ -171,7 +171,10 @@ open class ImagePickerController: UIViewController {
 
   func checkStatus() {
     let currentStatus = PHPhotoLibrary.authorizationStatus()
-    guard currentStatus != .authorized else { return }
+    guard currentStatus != .authorized else {
+        galleryView.fetchPhotos()
+        return
+    }
 
     if currentStatus == .notDetermined { hideViews() }
 

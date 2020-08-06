@@ -18,7 +18,7 @@ open class AssetManager {
   open static func fetch(withConfiguration configuration: Configuration, _ completion: @escaping (_ assets: [PHAsset]) -> Void) {
     guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
 
-    DispatchQueue.global(qos: .background).async {
+    DispatchQueue.global(qos: .userInteractive).async {
       let fetchResult = configuration.allowVideoSelection
         ? PHAsset.fetchAssets(with: PHFetchOptions())
         : PHAsset.fetchAssets(with: .image, options: PHFetchOptions())

@@ -87,6 +87,7 @@ open class ImageGalleryView: UIView {
   var imagesBeforeLoading = 0
   var fetchResult: PHFetchResult<AnyObject>?
   var imageLimit = 0
+  var didFechedAssets = false
 
   // MARK: - Initializers
 
@@ -118,7 +119,7 @@ open class ImageGalleryView: UIView {
     topSeparator.addSubview(configuration.indicatorView)
 
     imagesBeforeLoading = 0
-    fetchPhotos()
+   
   }
 
   // MARK: - Layout
@@ -144,6 +145,9 @@ open class ImageGalleryView: UIView {
   }
 
   func updateNoImagesLabel() {
+    if !self.didFechedAssets {
+        return
+    }
     let height = bounds.height
     let threshold = Dimensions.galleryBarHeight * 2
 
@@ -161,6 +165,7 @@ open class ImageGalleryView: UIView {
 
   func fetchPhotos(_ completion: (() -> Void)? = nil) {
     AssetManager.fetch(withConfiguration: configuration) { assets in
+      self.didFechedAssets = true;
       self.assets.removeAll()
       self.assets.append(contentsOf: assets)
       self.collectionView.reloadData()
