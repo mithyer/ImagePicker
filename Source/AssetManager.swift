@@ -4,39 +4,45 @@ import Photos
 
 open class AssetManager {
 
-  open static func getImage(_ name: String) -> UIImage {
-    let traitCollection = UITraitCollection(displayScale: 3)
-    var bundle = Bundle(for: AssetManager.self)
-
-    if let resource = bundle.resourcePath, let resourceBundle = Bundle(path: resource + "/ImagePicker.bundle") {
-      bundle = resourceBundle
+  
+  public static func getImage(_ name: String) -> UIImage {
+    struct Consts {
+      static let assetBundle: Bundle = {
+        var bundle = Bundle(for: AssetManager.self)
+        if let resource = bundle.resourcePath, let resourceBundle = Bundle(path: resource + "/ImagePicker.bundle") {
+          bundle = resourceBundle
+        }
+        return bundle
+      }()
+      static let traitCollection = UITraitCollection(displayScale: 3)
     }
-
-    return UIImage(named: name, in: bundle, compatibleWith: traitCollection) ?? UIImage()
+    return UIImage(named: name, in: Consts.assetBundle, compatibleWith: Consts.traitCollection) ?? UIImage()
   }
 
-  open static func fetch(withConfiguration configuration: Configuration, _ completion: @escaping (_ assets: [PHAsset]) -> Void) {
+  public static func fetch(withConfiguration configuration: Configuration, fetchAll: Bool = true, _ completion: @escaping (_ assets: [PHAsset], _ fetchedAll: Bool) -> Void) {
     guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
 
     DispatchQueue.global(qos: .userInteractive).async {
+      let options = PHFetchOptions()
+      let fetchSomeLimitCount = 50
+      if #available(iOS 9, *) {
+        options.fetchLimit = fetchAll ? 0 : fetchSomeLimitCount
+      }
+      options.sortDescriptors = [NSSortDescriptor.init(key: "modificationDate", ascending: false)]
       let fetchResult = configuration.allowVideoSelection
-        ? PHAsset.fetchAssets(with: PHFetchOptions())
-        : PHAsset.fetchAssets(with: .image, options: PHFetchOptions())
+        ? PHAsset.fetchAssets(with: options)
+        : PHAsset.fetchAssets(with: .image, options:options)
 
       if fetchResult.count > 0 {
-        var assets = [PHAsset]()
-        fetchResult.enumerateObjects({ object, _, _ in
-          assets.insert(object, at: 0)
-        })
-
+        let assets = fetchResult.objects(at: IndexSet.init(integersIn: 0..<fetchResult.count))
         DispatchQueue.main.async {
-          completion(assets)
+          completion(assets, fetchAll || fetchResult.count < fetchSomeLimitCount)
         }
       }
     }
   }
 
-  open static func resolveAsset(_ asset: PHAsset, size: CGSize = CGSize(width: 720, height: 1280), shouldPreferLowRes: Bool = false, completion: @escaping (_ image: UIImage?) -> Void) {
+  public static func resolveAsset(_ asset: PHAsset, size: CGSize = CGSize(width: 720, height: 1280), shouldPreferLowRes: Bool = false, completion: @escaping (_ image: UIImage?) -> Void) {
     let imageManager = PHImageManager.default()
     let requestOptions = PHImageRequestOptions()
     requestOptions.deliveryMode = shouldPreferLowRes ? .fastFormat : .highQualityFormat
@@ -51,7 +57,7 @@ open class AssetManager {
     }
   }
 
-  open static func resolveAssets(_ assets: [PHAsset], size: CGSize = CGSize(width: 720, height: 1280)) -> [UIImage] {
+  public static func resolveAssets(_ assets: [PHAsset], size: CGSize = CGSize(width: 720, height: 1280)) -> [UIImage] {
     let imageManager = PHImageManager.default()
     let requestOptions = PHImageRequestOptions()
     requestOptions.isSynchronous = true
