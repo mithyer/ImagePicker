@@ -153,6 +153,8 @@ open class ImagePickerController: UIViewController {
                                y: totalSize.height - bottomContainer.frame.height - galleryHeight,
                                width: totalSize.width,
                                height: galleryHeight)
+    self.updateGalleryViewFrames(GestureConstants.minimumHeight)
+    
     galleryView.updateFrames()
     checkStatus()
 
@@ -310,9 +312,9 @@ open class ImagePickerController: UIViewController {
   open func showGalleryView() {
     galleryView.collectionViewLayout.invalidateLayout()
     UIView.animate(withDuration: 0.3, animations: {
-      self.updateGalleryViewFrames(GestureConstants.minimumHeight)
       self.galleryView.collectionView.transform = CGAffineTransform.identity
       self.galleryView.collectionView.contentInset = UIEdgeInsets.zero
+      self.updateGalleryViewFrames(GestureConstants.minimumHeight)
     })
   }
 
@@ -331,8 +333,8 @@ open class ImagePickerController: UIViewController {
   }
 
   func updateGalleryViewFrames(_ constant: CGFloat) {
-    galleryView.frame.origin.y = totalSize.height - bottomContainer.frame.height - constant
     galleryView.frame.size.height = constant
+    galleryView.frame.origin.y = self.cameraController.view.frame.maxY - galleryView.frame.size.height
   }
 
   func enableGestures(_ enabled: Bool) {
@@ -419,7 +421,6 @@ extension ImagePickerController: CameraViewDelegate {
       self.stack.pushAsset(asset)
     }
 
-    galleryView.shouldTransform = true
     bottomContainer.pickerButton.isEnabled = true
 
     UIView.animate(withDuration: 0.3, animations: {
@@ -518,14 +519,14 @@ extension ImagePickerController: ImageGalleryPanGestureDelegate {
     } else if galleryHeight >= GestureConstants.minimumHeight {
       let scale = (galleryHeight - ImageGalleryView.Dimensions.galleryBarHeight) / (GestureConstants.minimumHeight - ImageGalleryView.Dimensions.galleryBarHeight)
       galleryView.collectionView.transform = CGAffineTransform(scaleX: scale, y: scale)
-      galleryView.frame.origin.y = initialFrame.origin.y + translation.y
       galleryView.frame.size.height = initialFrame.height - translation.y
-
+      galleryView.frame.origin.y = cameraController.view.frame.maxY - galleryView.frame.size.height
       let value = view.frame.width * (scale - 1) / scale
       galleryView.collectionView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: value)
     } else {
-      galleryView.frame.origin.y = initialFrame.origin.y + translation.y
       galleryView.frame.size.height = initialFrame.height - translation.y
+      galleryView.frame.origin.y = cameraController.view.frame.maxY - galleryView.frame.size.height
+
     }
 
     galleryView.updateNoImagesLabel()

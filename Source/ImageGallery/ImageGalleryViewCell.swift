@@ -1,4 +1,5 @@
 import UIKit
+import Photos
 
 class ImageGalleryViewCell: UICollectionViewCell {
 
@@ -22,6 +23,7 @@ class ImageGalleryViewCell: UICollectionViewCell {
     let videoBarFrame = CGRect(x: 0, y: frame.height - self.videoInfoBarHeight,
                                width: frame.width, height: self.videoInfoBarHeight)
     videoInfoView = VideoInfoView(frame: videoBarFrame)
+    videoInfoView.isHidden = true
     super.init(frame: frame)
 
     for view in [imageView, selectedImageView, videoInfoView] as [UIView] {
@@ -43,7 +45,14 @@ class ImageGalleryViewCell: UICollectionViewCell {
 
   // MARK: - Configuration
 
-  func configureCell(_ image: UIImage) {
-    imageView.image = image
+  func configureCell(_ asset: PHAsset, shouldPreferLowRes: Bool, selected: Bool) {
+    selectedImageView.image = selected ? AssetManager.getImage("selectedImageGallery") : nil
+    AssetManager.resolveAsset(asset, size: CGSize(width: 160, height: 240), shouldPreferLowRes: shouldPreferLowRes) { [weak self] image in
+      guard let self = self, let image = image else {
+        return
+      }
+      self.imageView.image = image
+      self.duration = asset.duration
+    }
   }
 }
