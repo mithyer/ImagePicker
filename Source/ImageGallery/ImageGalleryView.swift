@@ -104,8 +104,11 @@ open class ImageGalleryView: UIView {
   
   // MARK: - Initializers
   
-  public init(configuration: Configuration? = nil) {
+  public init?(configuration: Configuration? = nil) {
     if let configuration = configuration {
+      if !configuration.allowPhotoSelection {
+        return nil
+      }
       self.configuration = configuration
     }
     super.init(frame: .zero)

@@ -53,6 +53,8 @@ import UIKit
   @objc public var allowedOrientations = UIInterfaceOrientationMask.all
   @objc public var allowVolumeButtonsToTakePicture = true
   @objc public var useLowResolutionPreviewImage = false
+  // 是否允许选相册
+  @objc public var allowPhotoSelection = true
 
   // MARK: Images
   @objc public var indicatorView: UIView = {

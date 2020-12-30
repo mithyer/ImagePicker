@@ -5,7 +5,7 @@ import PhotosUI
 protocol CameraViewDelegate: class {
 
   func setFlashButtonHidden(_ hidden: Bool)
-  func imageToLibrary()
+  func imageToLibrary(asset: PHAsset?)
   func cameraNotAvailable()
 }
 
@@ -227,9 +227,9 @@ class CameraView: UIViewController, CLLocationManagerDelegate, CameraManDelegate
         })
     })
 
-    cameraMan.takePhoto(previewLayer, location: locationManager?.latestLocation) {
+    cameraMan.takePhoto(previewLayer, location: locationManager?.latestLocation) { asset in
       completion()
-      self.delegate?.imageToLibrary()
+      self.delegate?.imageToLibrary(asset: asset)
     }
   }
 
