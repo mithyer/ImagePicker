@@ -173,10 +173,6 @@ open class ImagePickerController: UIViewController {
                                     bottomContainer);
   }
 
-  open func resetAssets() {
-    self.stack.resetAssets([])
-  }
-
   func checkStatus() {
     let currentStatus = PHPhotoLibrary.authorizationStatus()
     guard currentStatus != .authorized else {
@@ -372,7 +368,7 @@ open class ImagePickerController: UIViewController {
     }
 
   fileprivate func takePicture() {
-    if !configuration.allowPhotoSelection {
+    if !configuration.allowPhotoSelection && !configuration.allowMultiplePhotoSelection {
       self.stack.resetAssets([])
     }
     guard isBelowImageLimit() && !isTakingPicture else { return }

@@ -39,6 +39,9 @@ class ViewController: UIViewController, ImagePickerDelegate {
     config.noImagesTitle = "Sorry! There are no images here!"
     config.recordLocation = false
     config.allowVideoSelection = true
+    
+    config.allowPhotoSelection = false
+    config.allowMultiplePhotoSelection = false
 
     let imagePicker = ImagePickerController(configuration: config)
     imagePicker.delegate = self
