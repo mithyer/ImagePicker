@@ -364,8 +364,8 @@ open class ImagePickerController: UIViewController {
   }
 
   fileprivate func isBelowImageLimit() -> Bool {
-    return (imageLimit == 0 || imageLimit > (galleryView?.selectedStack.assets.count ?? 0))
-    }
+    return imageLimit == 0 || imageLimit > self.stack.assets.count
+  }
 
   fileprivate func takePicture() {
     if !configuration.allowPhotoSelection && !configuration.allowMultiplePhotoSelection {
