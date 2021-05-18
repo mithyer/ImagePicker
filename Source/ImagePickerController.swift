@@ -86,7 +86,7 @@ open class ImagePickerController: UIViewController {
   open var doneButtonTitle: String? {
     didSet {
       if let doneButtonTitle = doneButtonTitle {
-        bottomContainer.doneButton.setTitle(doneButtonTitle, for: UIControlState())
+        bottomContainer.doneButton.setTitle(doneButtonTitle, for: UIControl.State())
       }
     }
   }
@@ -119,8 +119,7 @@ open class ImagePickerController: UIViewController {
     }
 
     view.addSubview(volumeView)
-    view.sendSubview(toBack: volumeView)
-
+    view.sendSubviewToBack(volumeView)
     view.backgroundColor = UIColor.white
     view.backgroundColor = configuration.mainColor
 
@@ -169,8 +168,8 @@ open class ImagePickerController: UIViewController {
 
     applyOrientationTransforms()
 
-    UIAccessibilityPostNotification(UIAccessibilityScreenChangedNotification,
-                                    bottomContainer);
+    UIAccessibility.post(notification: UIAccessibility.Notification.screenChanged,
+                                    argument: bottomContainer);
   }
 
   func checkStatus() {
@@ -197,7 +196,7 @@ open class ImagePickerController: UIViewController {
     let alertController = UIAlertController(title: configuration.requestPermissionTitle, message: configuration.requestPermissionMessage, preferredStyle: .alert)
 
     let alertAction = UIAlertAction(title: configuration.OKButtonTitle, style: .default) { _ in
-      if let settingsURL = URL(string: UIApplicationOpenSettingsURLString) {
+      if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
         UIApplication.shared.openURL(settingsURL)
       }
     }
@@ -259,7 +258,7 @@ open class ImagePickerController: UIViewController {
 
     NotificationCenter.default.addObserver(self,
       selector: #selector(handleRotation(_:)),
-      name: NSNotification.Name.UIDeviceOrientationDidChange,
+      name: UIDevice.orientationDidChangeNotification,
       object: nil)
   }
 
@@ -287,7 +286,7 @@ open class ImagePickerController: UIViewController {
 
     let title = !sender.assets.isEmpty ?
       configuration.doneButtonTitle : configuration.cancelButtonTitle
-    bottomContainer.doneButton.setTitle(title, for: UIControlState())
+    bottomContainer.doneButton.setTitle(title, for: UIControl.State())
   }
   
   @objc func dismissIfNeeded() {

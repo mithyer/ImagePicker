@@ -176,7 +176,7 @@ class CameraMan {
       let request = PHAssetChangeRequest.creationRequestForAsset(from: image)
       request.creationDate = Date()
       request.location = location
-      }, completionHandler: { (a, b) in
+      }, completionHandler: { (_, _) in
         DispatchQueue.main.async {
           let fetchOptions = PHFetchOptions()
               fetchOptions.sortDescriptors = [NSSortDescriptor(key: "creationDate", ascending: false)]
