@@ -19,7 +19,7 @@ open class AssetManager {
     return UIImage(named: name, in: Consts.assetBundle, compatibleWith: Consts.traitCollection) ?? UIImage()
   }
 
-  public static func fetch(withConfiguration configuration: Configuration, fetchAll: Bool = true, _ completion: @escaping (_ assets: [PHAsset], _ fetchedAll: Bool) -> Void) {
+  public static func fetch(withConfiguration configuration: ImagePickerConfiguration, fetchAll: Bool = true, _ completion: @escaping (_ assets: [PHAsset], _ fetchedAll: Bool) -> Void) {
     guard PHPhotoLibrary.authorizationStatus() == .authorized else { return }
 
     DispatchQueue.global(qos: .userInteractive).async {

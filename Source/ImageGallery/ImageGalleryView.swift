@@ -41,7 +41,7 @@ open class ImageGalleryView: UIView {
     }
   }
   
-  var configuration = Configuration()
+  var configuration = ImagePickerConfiguration()
   
   lazy open var collectionView: UICollectionView = { [unowned self] in
     let collectionView = UICollectionView(frame: CGRect.zero,
@@ -104,7 +104,7 @@ open class ImageGalleryView: UIView {
   
   // MARK: - Initializers
   
-  public init?(configuration: Configuration? = nil) {
+  public init?(configuration: ImagePickerConfiguration? = nil) {
     if let configuration = configuration {
       if !configuration.allowPhotoSelection {
         return nil
